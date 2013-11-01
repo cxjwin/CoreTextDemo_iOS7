@@ -387,7 +387,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Prefix.pch";
 				INFOPLIST_FILE = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -400,7 +403,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Prefix.pch";
 				INFOPLIST_FILE = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -466,6 +472,7 @@
 				55F01B1818223C7C00B14D65 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		55F01B1918223C7C00B14D65 /* Build configuration list for PBXNativeTarget "CoreTextDemo_iOS7Tests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +481,7 @@
 				55F01B1B18223C7C00B14D65 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

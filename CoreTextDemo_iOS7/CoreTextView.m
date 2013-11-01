@@ -11,6 +11,7 @@
 @implementation CoreTextView
 {
     CGPoint startPoint;
+    NSRange touchRange;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -19,6 +20,7 @@
     if (self) {
         // Initialization code
         self.backgroundColor = [UIColor yellowColor];
+        touchRange = NSMakeRange(NSNotFound, 0);
     }
     return self;
 }
@@ -28,19 +30,18 @@
 - (void)drawRect:(CGRect)rect
 {
     // Drawing code
-
-    for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
-        for (NSTextContainer *container in manager.textContainers) {
-            NSRange glyphRange = [manager glyphRangeForTextContainer:container];
-            CGPoint point = [manager locationForGlyphAtIndex:glyphRange.location];
-            [manager drawGlyphsForGlyphRange:glyphRange atPoint:point];
-            
-            
-            
-            
+    @synchronized(self) {
+        for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
+            for (NSTextContainer *container in manager.textContainers) {
+                NSRange glyphRange = [manager glyphRangeForTextContainer:container];
+                CGPoint point = [manager locationForGlyphAtIndex:glyphRange.location];
+                
+                
+                    [manager drawGlyphsForGlyphRange:glyphRange atPoint:point];
+                
+            }
         }
     }
-    
 }
 
 - (void)setTextStorage:(NSTextStorage *)textStorage
@@ -51,11 +52,24 @@
         // layoutManager
         NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
         [textStorage addLayoutManager:layoutManager];
-
+        layoutManager.usesFontLeading = NO;
+        
         // textContainer
-        CGSize size = CGSizeMake(100, 100);
-        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:size];        
+        CGSize size = CGSizeMake(190, 90);
+        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:size];
+        textContainer.widthTracksTextView = NO;
+        textContainer.heightTracksTextView = YES;
+                
         [layoutManager addTextContainer:textContainer];  
+        
+        startPoint = [layoutManager locationForGlyphAtIndex:0];
+        
+//        NSRange range;
+//        CGRect rect = [layoutManager lineFragmentRectForGlyphAtIndex:0 effectiveRange:&range];        
+//        [layoutManager setLineFragmentRect:rect forGlyphRange:range usedRect:CGRectZero];
+//        
+//        range = [layoutManager glyphRangeForTextContainer:textContainer];
+//        [layoutManager setLocation:CGPointMake(5, 8) forStartOfGlyphRange:range];
         
         [self setNeedsDisplay];
     }
@@ -65,26 +79,29 @@
 {
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInView:self];
-    
-    for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
-        for (NSTextContainer *container in manager.textContainers) {
-            
-            NSRange glyphRange = [manager glyphRangeForTextContainer:container];
-            CGPoint point = [manager locationForGlyphAtIndex:glyphRange.location];
-            location = CGPointMake(location.x - point.x, location.y - point.y);
-            
-            CGFloat f;
-            NSUInteger index = [manager glyphIndexForPoint:location inTextContainer:container fractionOfDistanceThroughGlyph:&f];
-            
-            
-            if (f > 0.01 && f < 0.99) {
+    @synchronized (self) {
+        for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
+            for (NSTextContainer *container in manager.textContainers) {
                 
-                index = [manager characterIndexForGlyphAtIndex:index];
-
+                location = CGPointMake(location.x - startPoint.x, location.y - startPoint.y);
                 
-                NSLog(@"---- index : %d, %f", index, f);
+                CGFloat f;
+                NSUInteger index = [manager glyphIndexForPoint:location inTextContainer:container fractionOfDistanceThroughGlyph:&f];
                 
-                
+                if (0.01 < f && f < 0.99) {
+                    NSRange _range;
+                    
+                    id value = [self.textStorage attribute:@"kTestKey" atIndex:index effectiveRange:&_range];
+                    
+                    // [manager lineFragmentRectForGlyphAtIndex:index effectiveRange:&_range];
+                    
+                    if (value) {
+                        touchRange = _range;
+                        NSLog(@"---- index : %d, %@, %@", index, NSStringFromRange(_range), value);
+                    } else {
+                        touchRange = NSMakeRange(NSNotFound, 0);
+                    }
+                }
             }
         }
     }
