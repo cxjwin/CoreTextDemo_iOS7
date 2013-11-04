@@ -7,6 +7,7 @@
 //
 
 #import "CoreTextView.h"
+#import "NSString+Weibo.h"
 
 @implementation CoreTextView
 {
@@ -30,15 +31,20 @@
 - (void)drawRect:(CGRect)rect
 {
     // Drawing code
+    if (self.textStorage == nil) {
+        return;
+    }
+    
     @synchronized(self) {
+        
+        
+        
+        
         for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
             for (NSTextContainer *container in manager.textContainers) {
                 NSRange glyphRange = [manager glyphRangeForTextContainer:container];
                 CGPoint point = [manager locationForGlyphAtIndex:glyphRange.location];
-                
-                
-                    [manager drawGlyphsForGlyphRange:glyphRange atPoint:point];
-                
+                [manager drawGlyphsForGlyphRange:glyphRange atPoint:point];
             }
         }
     }
@@ -57,8 +63,6 @@
         // textContainer
         CGSize size = CGSizeMake(190, 90);
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:size];
-        textContainer.widthTracksTextView = NO;
-        textContainer.heightTracksTextView = YES;
                 
         [layoutManager addTextContainer:textContainer];  
         
@@ -91,19 +95,39 @@
                 if (0.01 < f && f < 0.99) {
                     NSRange _range;
                     
-                    id value = [self.textStorage attribute:@"kTestKey" atIndex:index effectiveRange:&_range];
+                    id value = [self.textStorage attribute:kCustomGlyphAttributeType atIndex:index effectiveRange:&_range];
                     
                     // [manager lineFragmentRectForGlyphAtIndex:index effectiveRange:&_range];
                     
                     if (value) {
                         touchRange = _range;
                         NSLog(@"---- index : %d, %@, %@", index, NSStringFromRange(_range), value);
+                        
+                        [self setNeedsDisplay];
                     } else {
                         touchRange = NSMakeRange(NSNotFound, 0);
                     }
+                    
+                    
                 }
             }
         }
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (touchRange.location != NSNotFound) {
+        touchRange = NSMakeRange(NSNotFound, 0);
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (touchRange.location != NSNotFound) {
+        touchRange = NSMakeRange(NSNotFound, 0);
+        [self setNeedsDisplay];
     }
 }
 

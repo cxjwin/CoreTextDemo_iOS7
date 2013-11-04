@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "CoreTextView.h"
+#import "NSString+Weibo.h"
 
 @interface ViewController ()
 
@@ -21,14 +22,38 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
     NSString *text = 
-    @"just for 这个其实就是为了测试用的，\
-    最好是保证每一个字都不一样.\
-    最好是保证每一个字都不一样 \
-    最好是保证每一个字都不一样 \
-    test...";
+    @"http://t.cn/123QHz http://t.cn/1er6Hz [兔子][熊猫][给力][浮云][熊猫]   http://t.cn/1er6Hz   \
+    [熊猫][熊猫][熊猫][熊猫] Hello World 你好世界[熊猫][熊猫]熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫aaaaaaaaaaa";
     
+    
+    NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12], 
+                                 NSParagraphStyleAttributeName : [self myParagraphStyle]};
+    
+    // textStorage
+    NSTextStorage *textStorage = [text transformText];//[[NSTextStorage alloc] initWithString:text attributes:attributes];
+    [textStorage addAttributes:attributes range:NSMakeRange(0, [textStorage length])];
+    
+    
+    [textStorage addAttribute:@"kTestKey" value:@"Test" range:NSMakeRange(9, 6)];
+    
+    CGSize size = CGSizeMake(200, 100);
+    CGRect frame = (CGRect){10, 100, size};
+    
+//    UITextView* textView = [[UITextView alloc] initWithFrame:frame textContainer:textContainer];
+//    textView.backgroundColor = [UIColor yellowColor];
+//    [self.view addSubview:textView];
+    
+    // textView
+    CoreTextView *textView = [[CoreTextView alloc] initWithFrame:frame];
+    textView.textStorage = textStorage;
+    [self.view addSubview:textView];
+}
+
+- (NSMutableParagraphStyle *)myParagraphStyle
+{
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.lineSpacing = 8;
+    
+    paragraphStyle.lineSpacing = 5;
     paragraphStyle.paragraphSpacing = 15;
     paragraphStyle.alignment = NSTextAlignmentLeft;
     paragraphStyle.firstLineHeadIndent = 5;
@@ -42,27 +67,7 @@
     paragraphStyle.hyphenationFactor = 2;
     paragraphStyle.paragraphSpacingBefore = 0;
     
-    
-    NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12], 
-                                 NSParagraphStyleAttributeName : paragraphStyle};
-    
-    // textStorage
-    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithString:text attributes:attributes];
-    
-    [textStorage addAttribute:@"kTestKey" value:@"Test" range:NSMakeRange(9, 6)];
-    
-    
-    CGSize size = CGSizeMake(200, 100);
-    CGRect frame = (CGRect){10, 100, size};
-    
-//    UITextView* textView = [[UITextView alloc] initWithFrame:frame textContainer:textContainer];
-//    textView.backgroundColor = [UIColor yellowColor];
-//    [self.view addSubview:textView];
-    
-    // textView
-    CoreTextView *textView = [[CoreTextView alloc] initWithFrame:frame];
-    textView.textStorage = textStorage;
-    [self.view addSubview:textView];
+    return paragraphStyle;
 }
 
 - (void)didReceiveMemoryWarning
