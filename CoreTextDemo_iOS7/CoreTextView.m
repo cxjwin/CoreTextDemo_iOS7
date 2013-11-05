@@ -9,6 +9,8 @@
 #import "CoreTextView.h"
 #import "NSString+Weibo.h"
 
+NSString *const kTouchedRangeNotification = @"kTouchedRangeNotification";
+
 @implementation CoreTextView
 {
     CGPoint startPoint;
@@ -36,10 +38,7 @@
     }
     
     @synchronized(self) {
-        
-        
-        
-        
+                
         for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
             for (NSTextContainer *container in manager.textContainers) {
                 NSRange glyphRange = [manager glyphRangeForTextContainer:container];
@@ -56,9 +55,9 @@
         _textStorage = textStorage;
         
         // layoutManager
-        NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+        CWLayoutManager *layoutManager = [[CWLayoutManager alloc] init];
+        layoutManager.delegate = self;
         [textStorage addLayoutManager:layoutManager];
-        layoutManager.usesFontLeading = NO;
         
         // textContainer
         CGSize size = CGSizeMake(190, 90);
@@ -67,13 +66,6 @@
         [layoutManager addTextContainer:textContainer];  
         
         startPoint = [layoutManager locationForGlyphAtIndex:0];
-        
-//        NSRange range;
-//        CGRect rect = [layoutManager lineFragmentRectForGlyphAtIndex:0 effectiveRange:&range];        
-//        [layoutManager setLineFragmentRect:rect forGlyphRange:range usedRect:CGRectZero];
-//        
-//        range = [layoutManager glyphRangeForTextContainer:textContainer];
-//        [layoutManager setLocation:CGPointMake(5, 8) forStartOfGlyphRange:range];
         
         [self setNeedsDisplay];
     }
@@ -95,20 +87,20 @@
                 if (0.01 < f && f < 0.99) {
                     NSRange _range;
                     
-                    id value = [self.textStorage attribute:kCustomGlyphAttributeType atIndex:index effectiveRange:&_range];
-                    
-                    // [manager lineFragmentRectForGlyphAtIndex:index effectiveRange:&_range];
-                    
+                    id value = [self.textStorage attribute:NSLinkAttributeName atIndex:index effectiveRange:&_range];
+                                        
                     if (value) {
                         touchRange = _range;
-                        NSLog(@"---- index : %d, %@, %@", index, NSStringFromRange(_range), value);
+                        
+                        [(CWLayoutManager *)manager setTouchRange:touchRange];
+                        [(CWLayoutManager *)manager setIsTouched:YES];
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kTouchedRangeNotification object:[NSValue valueWithRange:touchRange]];
                         
                         [self setNeedsDisplay];
                     } else {
                         touchRange = NSMakeRange(NSNotFound, 0);
                     }
-                    
-                    
                 }
             }
         }
@@ -119,6 +111,10 @@
 {
     if (touchRange.location != NSNotFound) {
         touchRange = NSMakeRange(NSNotFound, 0);
+        for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
+            [(CWLayoutManager *)manager setIsTouched:NO];
+        }
+
         [self setNeedsDisplay];
     }
 }
@@ -127,12 +123,20 @@
 {
     if (touchRange.location != NSNotFound) {
         touchRange = NSMakeRange(NSNotFound, 0);
+        for (NSLayoutManager *manager in self.textStorage.layoutManagers) {
+            [(CWLayoutManager *)manager setIsTouched:NO];
+        }
         [self setNeedsDisplay];
     }
 }
 
 #pragma mark - 
 #pragma mark - NSLayoutManagerDelegate
+//- (NSUInteger)layoutManager:(NSLayoutManager *)layoutManager shouldGenerateGlyphs:(const CGGlyph *)glyphs properties:(const NSGlyphProperty *)props characterIndexes:(const NSUInteger *)charIndexes font:(UIFont *)aFont forGlyphRange:(NSRange)glyphRange NS_AVAILABLE_IOS(7_0)
+//{
+//    return 0;
+//}
+
 // Returns the spacing after the line ending with glyphIndex.
 //- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect NS_AVAILABLE_IOS(7_0)
 //{
@@ -160,5 +164,70 @@
 //{
 //    
 //}
+
+// Invoked while determining the soft line break point.  When NO, NSLayoutManager tries to find the next line break opportunity before charIndex
+//- (BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByWordBeforeCharacterAtIndex:(NSUInteger)charIndex NS_AVAILABLE_IOS(7_0)
+//{
+//    return YES;
+//}
+
+// Invoked while determining the hyphenation point.  When NO, NSLayoutManager tries to find the next hyphenation opportunity before charIndex
+//- (BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByHyphenatingBeforeCharacterAtIndex:(NSUInteger)charIndex NS_AVAILABLE_IOS(7_0)
+//{
+//    return YES;
+//}
+
+@end
+
+@implementation CWLayoutManager
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.touchRange = NSMakeRange(NSNotFound, 0);
+        self.isTouched = NO;
+    }
+    return self;
+}
+
+- (void)drawUnderlineForGlyphRange:(NSRange)glyphRange underlineType:(NSUnderlineStyle)underlineVal baselineOffset:(CGFloat)baselineOffset lineFragmentRect:(CGRect)lineRect lineFragmentGlyphRange:(NSRange)lineGlyphRange containerOrigin:(CGPoint)containerOrigin
+{
+	// Left border (== position) of first underlined glyph
+	CGFloat firstPosition = [self locationForGlyphAtIndex: glyphRange.location].x;
+	
+	// Right border (== position + width) of last underlined glyph
+	CGFloat lastPosition;
+	
+	// When link is not the last text in line, just use the location of the next glyph
+	if (NSMaxRange(glyphRange) < NSMaxRange(lineGlyphRange)) {
+		lastPosition = [self locationForGlyphAtIndex: NSMaxRange(glyphRange)].x;
+	}
+	// Otherwise get the end of the actually used rect
+	else {
+		lastPosition = [self lineFragmentUsedRectForGlyphAtIndex:NSMaxRange(glyphRange)-1 effectiveRange:NULL].size.width;
+	}
+	
+	// Inset line fragment to underlined area
+	lineRect.origin.x = lineRect.origin.x + firstPosition;
+	lineRect.size.width = lastPosition - firstPosition;
+	lineRect.size.height = lineRect.size.height - 3;
+    
+	// Offset line by container origin
+	lineRect.origin.x = lineRect.origin.x + containerOrigin.x;
+	lineRect.origin.y = lineRect.origin.y + containerOrigin.y - 1.5;
+	
+	// Align line to pixel boundaries, passed rects may be
+	lineRect = CGRectInset(CGRectIntegral(lineRect), .5, .5);
+
+    NSRange tempRange = NSIntersectionRange(self.touchRange, glyphRange);
+	if (self.isTouched && tempRange.length != 0) {
+        [[UIColor purpleColor] set];
+    } else {
+        [[UIColor greenColor] set];
+    }
+        
+	[[UIBezierPath bezierPathWithRect: lineRect] fill];
+}
 
 @end

@@ -8,8 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSString *const kTouchedRangeNotification;
+
 NS_CLASS_AVAILABLE_IOS(7_0) @interface CoreTextView : UIView <NSLayoutManagerDelegate>
 
 @property (copy, nonatomic) NSTextStorage *textStorage;
+
+@end
+
+NS_CLASS_AVAILABLE_IOS(7_0) @interface CWLayoutManager : NSLayoutManager
+
+@property (nonatomic) BOOL isTouched;
+@property (nonatomic) NSRange touchRange;
 
 @end

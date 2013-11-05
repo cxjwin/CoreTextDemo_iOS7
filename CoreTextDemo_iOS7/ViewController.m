@@ -16,15 +16,21 @@
 
 @implementation ViewController
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kTouchedRangeNotification object:nil];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(testTouch:) name:kTouchedRangeNotification object:nil];
+    
     NSString *text = 
     @"http://t.cn/123QHz http://t.cn/1er6Hz [兔子][熊猫][给力][浮云][熊猫]   http://t.cn/1er6Hz   \
-    [熊猫][熊猫][熊猫][熊猫] Hello World 你好世界[熊猫][熊猫]熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫熊猫aaaaaaaaaaa";
-    
+    [熊猫][熊猫][熊猫][熊猫] Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa";
     
     NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12], 
                                  NSParagraphStyleAttributeName : [self myParagraphStyle]};
@@ -33,20 +39,17 @@
     NSTextStorage *textStorage = [text transformText];//[[NSTextStorage alloc] initWithString:text attributes:attributes];
     [textStorage addAttributes:attributes range:NSMakeRange(0, [textStorage length])];
     
-    
-    [textStorage addAttribute:@"kTestKey" value:@"Test" range:NSMakeRange(9, 6)];
-    
     CGSize size = CGSizeMake(200, 100);
     CGRect frame = (CGRect){10, 100, size};
+    
+    CoreTextView *textView = [[CoreTextView alloc] initWithFrame:frame];
+    textView.tag = 101;
+    textView.textStorage = textStorage;
+    [self.view addSubview:textView];
     
 //    UITextView* textView = [[UITextView alloc] initWithFrame:frame textContainer:textContainer];
 //    textView.backgroundColor = [UIColor yellowColor];
 //    [self.view addSubview:textView];
-    
-    // textView
-    CoreTextView *textView = [[CoreTextView alloc] initWithFrame:frame];
-    textView.textStorage = textStorage;
-    [self.view addSubview:textView];
 }
 
 - (NSMutableParagraphStyle *)myParagraphStyle
@@ -68,6 +71,17 @@
     paragraphStyle.paragraphSpacingBefore = 0;
     
     return paragraphStyle;
+}
+
+- (void)testTouch:(NSNotification *)notification
+{
+    NSValue *value = notification.object;
+    NSRange range = [value rangeValue];
+    
+    CoreTextView *textView = (id)[self.view viewWithTag:101];
+    NSString *string = [textView.textStorage.string substringWithRange:range];
+    
+    NSLog(@"touch string : %@", string);
 }
 
 - (void)didReceiveMemoryWarning
