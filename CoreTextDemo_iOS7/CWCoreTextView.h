@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString *const kTouchedRangeNotification;
+extern NSString *const kTouchedLinkNotification;
 
-NS_CLASS_AVAILABLE_IOS(7_0) @interface CoreTextView : UIView <NSLayoutManagerDelegate>
+NS_CLASS_AVAILABLE_IOS(7_0) @interface CWCoreTextView : UIView <NSLayoutManagerDelegate>
 
 @property (copy, nonatomic) NSTextStorage *textStorage;
 
