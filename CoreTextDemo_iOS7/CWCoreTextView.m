@@ -15,14 +15,10 @@ NSString *const kTouchedLinkNotification = @"kTouchedLinkNotification";
 static const NSRange kCWInvalidRange = {.location = NSNotFound, .length = 0};
 
 @implementation CWCoreTextView {
-	OSSpinLock spinlock;
-	
-	CWLayoutManager	*layoutManager;
-	NSTextContainer *textContainer;
-	
-	CWTouchesGestureRecognizer *touchesGestureRecognizer;
-	
-	NSRange touchRange;
+	CWLayoutManager	*_layoutManager;
+	NSTextContainer *_textContainer;
+	CWTouchesGestureRecognizer *_touchesGestureRecognizer;
+	NSRange _touchRange;
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -44,23 +40,26 @@ static const NSRange kCWInvalidRange = {.location = NSNotFound, .length = 0};
 }
 
 - (void)commonInit {
-	// Initialization code
-	spinlock = OS_SPINLOCK_INIT;
-	
+    // UILabel
+    _preferredMaxLayoutWidth = CGFLOAT_MAX;
+
 	// layoutManager
-	layoutManager = [[CWLayoutManager alloc] init];
-	layoutManager.delegate = self;
+	_layoutManager = [[CWLayoutManager alloc] init];
+	_layoutManager.delegate = self;
 	
 	// textContainer
-	textContainer = [[NSTextContainer alloc] initWithSize:CGSizeMake(200, CGFLOAT_MAX)];
-	[layoutManager addTextContainer:textContainer];
+    CGSize size = CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX);
+	_textContainer = [[NSTextContainer alloc] initWithSize:size];
+	[_layoutManager addTextContainer:_textContainer];
 	
 	// gesture
-	touchesGestureRecognizer = [[CWTouchesGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouch:)];
-	[self addGestureRecognizer:touchesGestureRecognizer];
+	_touchesGestureRecognizer = [[CWTouchesGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouch:)];
+	[self addGestureRecognizer:_touchesGestureRecognizer];
 	
 	// range
-	touchRange = kCWInvalidRange;
+	_touchRange = kCWInvalidRange;
+    
+    _contentInset = UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 // Only override drawRect: if you perform custom drawing.
@@ -71,85 +70,136 @@ static const NSRange kCWInvalidRange = {.location = NSNotFound, .length = 0};
 		return;
 	}
 
-	// lock
-	OSSpinLockLock(&spinlock);
-	NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
-	CGPoint point = [layoutManager locationForGlyphAtIndex:glyphRange.location];
-	[layoutManager drawGlyphsForGlyphRange:glyphRange atPoint:point];
-	OSSpinLockUnlock(&spinlock);
+    NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
+    CGPoint point = [_layoutManager locationForGlyphAtIndex:glyphRange.location];
+    [_layoutManager drawGlyphsForGlyphRange:glyphRange atPoint:point];
 }
 
 #pragma mark - Setters
 
 - (void)setFrame:(CGRect)frame {
-	[super setFrame:frame];
-	if (textContainer) {
-		textContainer.size = frame.size;
-	}
+    [super setFrame:frame];
+    
+    if (_textContainer) {
+        _textContainer.size = CGSizeMake(CGRectGetWidth(frame), CGFLOAT_MAX);
+    }
 }
 
 - (void)setTextStorage:(NSTextStorage *)textStorage {
-	OSSpinLockLock(&spinlock);
 	if (_textStorage != textStorage) {
+        [_textStorage removeLayoutManager:_layoutManager];
+        
 		_textStorage = textStorage;
-		[_textStorage addLayoutManager:layoutManager];
+        
+		[_textStorage addLayoutManager:_layoutManager];
 		
 		[self setNeedsUpdateConstraints];
 		[self setNeedsDisplay];
 	}
-	OSSpinLockUnlock(&spinlock);
+}
+
+- (void)setContentInset:(UIEdgeInsets)contentInset {
+    if (!UIEdgeInsetsEqualToEdgeInsets(_contentInset, contentInset)) {
+        _contentInset = contentInset;
+        
+        [self setNeedsUpdateConstraints];
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setPreferredMaxLayoutWidth:(CGFloat)preferredMaxLayoutWidth {
+    if (_preferredMaxLayoutWidth != preferredMaxLayoutWidth) {
+        _preferredMaxLayoutWidth = preferredMaxLayoutWidth;
+        
+        if (_preferredMaxLayoutWidth > CGRectGetWidth(self.frame)) {
+            CGRect frame = self.frame;
+            frame.size.width = _preferredMaxLayoutWidth;
+            self.frame = frame;
+        }
+        
+        [self setNeedsUpdateConstraints];
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)handleTouch:(UIGestureRecognizer *)gestureRecognizer {
 	UIGestureRecognizerState state = gestureRecognizer.state;
 	if (state == UIGestureRecognizerStateBegan) {
-		OSSpinLockLock(&spinlock);
 		CGPoint location = [gestureRecognizer locationInView:self];
-		CGPoint startPoint = [layoutManager locationForGlyphAtIndex:0];
+		CGPoint startPoint = [_layoutManager locationForGlyphAtIndex:0];
 		
 		location = CGPointMake(location.x - startPoint.x, location.y - startPoint.y);
 		
 		CGFloat fraction;
-		NSUInteger index = [layoutManager glyphIndexForPoint:location inTextContainer:textContainer fractionOfDistanceThroughGlyph:&fraction];
+		NSUInteger index = [_layoutManager glyphIndexForPoint:location inTextContainer:_textContainer fractionOfDistanceThroughGlyph:&fraction];
 		
-		NSLog(@"%f", fraction);
-		if (0.01 < fraction && fraction < 0.99) {
+        CGRect glyphRect = [_layoutManager boundingRectForGlyphRange:NSMakeRange(index, 1) inTextContainer:_textContainer];
+        
+		NSLog(@"%lu", index);
+		/*if (0.01 < fraction && fraction < 0.99) {*/
+        if (CGRectContainsPoint(glyphRect, location)) {
 			NSRange effectiveRange;
 			
 			id value = [_textStorage attribute:NSLinkAttributeName atIndex:index effectiveRange:&effectiveRange];
 			
 			if (value) {
-				touchRange = effectiveRange;
-				layoutManager.touchRange = touchRange;
-				layoutManager.isTouched = YES;
+				_touchRange = effectiveRange;
+				_layoutManager.touchRange = _touchRange;
+				_layoutManager.isTouched = YES;
 				
 				[[NSNotificationCenter defaultCenter] postNotificationName:kTouchedLinkNotification object:value];
 				
 				[self setNeedsDisplay];
 			} else {
-				touchRange = kCWInvalidRange;
+				_touchRange = kCWInvalidRange;
 			}
 		}
-		OSSpinLockUnlock(&spinlock);
 	}
 	else if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled) {
-		if (touchRange.location != NSNotFound) {
-			touchRange = kCWInvalidRange;
-			layoutManager.isTouched = NO;
+		if (_touchRange.location != NSNotFound) {
+			_touchRange = kCWInvalidRange;
+			_layoutManager.isTouched = NO;
 			[self setNeedsDisplay];
 		}
 	}
 }
 
 - (CGSize)intrinsicContentSize {
-	CGRect rect = [layoutManager usedRectForTextContainer:textContainer];
-	CGFloat width = ceil(CGRectGetWidth(rect)) + 30;
-	CGFloat height = ceil(CGRectGetHeight(rect)) + 14;
-	return CGSizeMake(width, height);
+    NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
+	CGRect rect = [_layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:_textContainer];
+    rect = CGRectInset(rect, -_textContainer.lineFragmentPadding, 0);
+    CGSize size = rect.size;
+    NSTextStorage *textStorage = _layoutManager.textStorage;
+    if (textStorage) {
+        NSDictionary *att = [textStorage attributesAtIndex:0 effectiveRange:NULL];
+        NSParagraphStyle *p = att[NSParagraphStyleAttributeName];
+        
+        size.width += p.headIndent * 2;
+        size.height += p.lineSpacing * 2;
+    }
+    
+	return size;
 }
 
 #pragma mark -
 #pragma mark - NSLayoutManagerDelegate
+
+- (BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByWordBeforeCharacterAtIndex:(NSUInteger)charIndex {
+    NSRange range;
+    NSURL *linkURL = [layoutManager.textStorage attribute:NSLinkAttributeName atIndex:charIndex effectiveRange:&range];
+    
+    // Do not break lines in links unless absolutely required
+    if (linkURL && charIndex > range.location && charIndex <= NSMaxRange(range)) {
+        return NO;
+    }
+    else {
+        return YES;
+    }
+}
+
+- (BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByHyphenatingBeforeCharacterAtIndex:(NSUInteger)charIndex NS_AVAILABLE(10_11, 7_0) {
+    return NO;
+}
 
 //- (NSUInteger)layoutManager:(NSLayoutManager *)layoutManager shouldGenerateGlyphs:(const CGGlyph *)glyphs properties:(const NSGlyphProperty *)props characterIndexes:(const NSUInteger *)charIndexes font:(UIFont *)aFont forGlyphRange:(NSRange)glyphRange NS_AVAILABLE_IOS(7_0)
 //{
@@ -243,7 +293,7 @@ static const NSRange kCWInvalidRange = {.location = NSNotFound, .length = 0};
 	if (_isTouched && tempRange.length != 0) {
 		[[UIColor purpleColor] set];
 	} else {
-		[[UIColor greenColor] set];
+		[[UIColor clearColor] set];
 	}
 
 	[[UIBezierPath bezierPathWithRect:lineRect] fill];

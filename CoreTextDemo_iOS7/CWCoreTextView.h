@@ -12,7 +12,12 @@ extern NSString *const kTouchedLinkNotification;
 
 NS_CLASS_AVAILABLE_IOS(7_0) @interface CWCoreTextView : UIView <NSLayoutManagerDelegate>
 
-@property (copy, nonatomic) NSTextStorage *textStorage;
+@property (nonatomic, strong) NSTextStorage *textStorage;
+
+// default {5, 5, 5, 5}
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+
+@property (nonatomic, assign) CGFloat preferredMaxLayoutWidth;
 
 @end
 

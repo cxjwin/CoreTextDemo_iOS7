@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5546F9C919EE51C100328E5E /* CWTextStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5546F9C819EE51C100328E5E /* CWTextStorage.m */; };
 		55759BEA1827A24100D82CB6 /* face1.png in Resources */ = {isa = PBXBuildFile; fileRef = 55759B831827A24000D82CB6 /* face1.png */; };
 		55759BEB1827A24100D82CB6 /* face10.png in Resources */ = {isa = PBXBuildFile; fileRef = 55759B841827A24000D82CB6 /* face10.png */; };
 		55759BEC1827A24100D82CB6 /* face100.gif in Resources */ = {isa = PBXBuildFile; fileRef = 55759B851827A24000D82CB6 /* face100.gif */; };
@@ -113,8 +112,9 @@
 		55759C501827A24100D82CB6 /* face99.gif in Resources */ = {isa = PBXBuildFile; fileRef = 55759BE91827A24100D82CB6 /* face99.gif */; };
 		55759C531827A25500D82CB6 /* emotionImage.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55759C511827A25500D82CB6 /* emotionImage.plist */; };
 		55759C541827A25500D82CB6 /* emotion.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55759C521827A25500D82CB6 /* emotion.plist */; };
-		55759C571827A32600D82CB6 /* NSString+Weibo.m in Sources */ = {isa = PBXBuildFile; fileRef = 55759C561827A32600D82CB6 /* NSString+Weibo.m */; };
 		5579949419EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5579949319EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m */; };
+		558862D01B77AE450085DD5B /* NSString+Weibo.m in Sources */ = {isa = PBXBuildFile; fileRef = 558862CF1B77AE450085DD5B /* NSString+Weibo.m */; };
+		559751D71B73A70300762913 /* test.txt in Resources */ = {isa = PBXBuildFile; fileRef = 559751D61B73A70300762913 /* test.txt */; };
 		55F01AE818223C7C00B14D65 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F01AE718223C7C00B14D65 /* Foundation.framework */; };
 		55F01AEA18223C7C00B14D65 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F01AE918223C7C00B14D65 /* CoreGraphics.framework */; };
 		55F01AEC18223C7C00B14D65 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F01AEB18223C7C00B14D65 /* UIKit.framework */; };
@@ -143,8 +143,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5546F9C719EE51C100328E5E /* CWTextStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTextStorage.h; sourceTree = "<group>"; };
-		5546F9C819EE51C100328E5E /* CWTextStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTextStorage.m; sourceTree = "<group>"; };
 		55759B831827A24000D82CB6 /* face1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = face1.png; sourceTree = "<group>"; };
 		55759B841827A24000D82CB6 /* face10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = face10.png; sourceTree = "<group>"; };
 		55759B851827A24000D82CB6 /* face100.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = face100.gif; sourceTree = "<group>"; };
@@ -250,10 +248,11 @@
 		55759BE91827A24100D82CB6 /* face99.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = face99.gif; sourceTree = "<group>"; };
 		55759C511827A25500D82CB6 /* emotionImage.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emotionImage.plist; sourceTree = "<group>"; };
 		55759C521827A25500D82CB6 /* emotion.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emotion.plist; sourceTree = "<group>"; };
-		55759C551827A32600D82CB6 /* NSString+Weibo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Weibo.h"; sourceTree = "<group>"; };
-		55759C561827A32600D82CB6 /* NSString+Weibo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Weibo.m"; sourceTree = "<group>"; };
 		5579949219EE3E6B006C8E4F /* CWTouchesGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTouchesGestureRecognizer.h; sourceTree = "<group>"; };
 		5579949319EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTouchesGestureRecognizer.m; sourceTree = "<group>"; };
+		558862CE1B77AE450085DD5B /* NSString+Weibo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Weibo.h"; sourceTree = "<group>"; };
+		558862CF1B77AE450085DD5B /* NSString+Weibo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Weibo.m"; sourceTree = "<group>"; };
+		559751D61B73A70300762913 /* test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.txt; sourceTree = "<group>"; };
 		55F01AE418223C7C00B14D65 /* CoreTextDemo_iOS7.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreTextDemo_iOS7.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55F01AE718223C7C00B14D65 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		55F01AE918223C7C00B14D65 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -445,15 +444,14 @@
 		55F01AED18223C7C00B14D65 /* CoreTextDemo_iOS7 */ = {
 			isa = PBXGroup;
 			children = (
-				55759C551827A32600D82CB6 /* NSString+Weibo.h */,
-				55759C561827A32600D82CB6 /* NSString+Weibo.m */,
+				559751D61B73A70300762913 /* test.txt */,
+				558862CE1B77AE450085DD5B /* NSString+Weibo.h */,
+				558862CF1B77AE450085DD5B /* NSString+Weibo.m */,
 				55F01AF618223C7C00B14D65 /* AppDelegate.h */,
 				55F01AF718223C7C00B14D65 /* AppDelegate.m */,
 				55F01AF918223C7C00B14D65 /* Main.storyboard */,
 				55F01AFC18223C7C00B14D65 /* ViewController.h */,
 				55F01AFD18223C7C00B14D65 /* ViewController.m */,
-				5546F9C719EE51C100328E5E /* CWTextStorage.h */,
-				5546F9C819EE51C100328E5E /* CWTextStorage.m */,
 				55F01B1C18223CB500B14D65 /* CWCoreTextView.h */,
 				55F01B1D18223CB500B14D65 /* CWCoreTextView.m */,
 				5579949219EE3E6B006C8E4F /* CWTouchesGestureRecognizer.h */,
@@ -539,7 +537,7 @@
 		55F01ADC18223C7C00B14D65 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = cxjwin;
 				TargetAttributes = {
 					55F01B0418223C7C00B14D65 = {
@@ -619,6 +617,7 @@
 				55759C331827A24100D82CB6 /* face72.gif in Resources */,
 				55F01AF218223C7C00B14D65 /* InfoPlist.strings in Resources */,
 				55759BED1827A24100D82CB6 /* face101.png in Resources */,
+				559751D71B73A70300762913 /* test.txt in Resources */,
 				55759C241827A24100D82CB6 /* face59.png in Resources */,
 				55759C061827A24100D82CB6 /* face31.png in Resources */,
 				55759C0C1827A24100D82CB6 /* face37.png in Resources */,
@@ -697,12 +696,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55759C571827A32600D82CB6 /* NSString+Weibo.m in Sources */,
 				5579949419EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m in Sources */,
 				55F01AFE18223C7C00B14D65 /* ViewController.m in Sources */,
 				55F01AF818223C7C00B14D65 /* AppDelegate.m in Sources */,
 				55F01B1E18223CB500B14D65 /* CWCoreTextView.m in Sources */,
-				5546F9C919EE51C100328E5E /* CWTextStorage.m in Sources */,
+				558862D01B77AE450085DD5B /* NSString+Weibo.m in Sources */,
 				55F01AF418223C7C00B14D65 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -771,6 +769,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -785,7 +784,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -817,7 +816,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -832,6 +831,7 @@
 				GCC_PREFIX_HEADER = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Prefix.pch";
 				INFOPLIST_FILE = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cxjwin.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -848,6 +848,7 @@
 				GCC_PREFIX_HEADER = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Prefix.pch";
 				INFOPLIST_FILE = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cxjwin.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -871,6 +872,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "CoreTextDemo_iOS7Tests/CoreTextDemo_iOS7Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cxjwin.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -889,6 +891,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CoreTextDemo_iOS7/CoreTextDemo_iOS7-Prefix.pch";
 				INFOPLIST_FILE = "CoreTextDemo_iOS7Tests/CoreTextDemo_iOS7Tests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cxjwin.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;

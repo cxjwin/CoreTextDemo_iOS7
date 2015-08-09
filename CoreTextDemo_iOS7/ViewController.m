@@ -26,11 +26,12 @@
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 
+    self.textView.preferredMaxLayoutWidth = 150;
+    
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(testTouch:) name:kTouchedLinkNotification object:nil];
-
-	NSString *text =
-	    @"http://t.cn/123QHz http://t.cn/1er6Hz [兔子][熊猫][给力][浮云][熊猫]   http://t.cn/1er6Hz   \
-    [熊猫][熊猫][熊猫][熊猫] Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa[熊猫] Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa[熊猫] Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa[熊猫] Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa[熊猫] http://t.cn/6gb0Hz Hello World 你好世界[熊猫][熊猫]熊猫aaaaaaa"                                                                                              ;
+    
+    NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"test" ofType:@"txt"]];
+    NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
 	NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12],
 		                         NSParagraphStyleAttributeName : [self myParagraphStyle]};
@@ -46,11 +47,10 @@
 	NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 
 	paragraphStyle.lineSpacing = 5;
-	paragraphStyle.paragraphSpacing = 15;
+//	paragraphStyle.paragraphSpacing = 5;
 	paragraphStyle.alignment = NSTextAlignmentLeft;
 	paragraphStyle.firstLineHeadIndent = 5;
 	paragraphStyle.headIndent = 5;
-	paragraphStyle.tailIndent = 250;
 	paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
 	paragraphStyle.minimumLineHeight = 10;
 	paragraphStyle.maximumLineHeight = 20;
@@ -72,6 +72,8 @@
 	else {
 		NSLog(@"touch string : %@", value);
 	}
+    
+    NSLog(@"%@", NSStringFromCGRect(self.textView.frame));
 }
 
 - (void)didReceiveMemoryWarning {
