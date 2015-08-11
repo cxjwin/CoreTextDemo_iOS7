@@ -11,6 +11,10 @@
 
 @interface NSString (Weibo)
 
+- (NSString *)transformServerStringToClientString;
+
+- (NSString *)transformClientStringToServerString;
+
 - (NSTextStorage *)transformText;
 
 @end

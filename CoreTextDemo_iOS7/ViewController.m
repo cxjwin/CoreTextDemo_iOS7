@@ -36,8 +36,10 @@
 	NSDictionary *attributes = @{NSFontAttributeName : [UIFont systemFontOfSize:12],
 		                         NSParagraphStyleAttributeName : [self myParagraphStyle]};
 
+    NSString *transText = [text transformServerStringToClientString];
+    
 	// textStorage
-	NSTextStorage *textStorage = [text transformText];
+	NSTextStorage *textStorage = [transText transformText];
 	[textStorage addAttributes:attributes range:NSMakeRange(0, [textStorage length])];
 
 	_textView.textStorage = textStorage;
