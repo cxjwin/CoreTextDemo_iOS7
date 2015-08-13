@@ -1,14 +1,14 @@
 //
-//  NSString+Weibo.m
+//  NSString+Jingoal.m
 //  CoreTextDemo
 //
 //  Created by cxjwin on 13-10-31.
 //  Copyright (c) 2013年 cxjwin. All rights reserved.
 //
 
-#import "NSString+Weibo.h"
+#import "NSString+Jingoal.h"
 
-@implementation NSString (Weibo)
+@implementation NSString (Jingoal)
 
 static NSDictionary *emojiDictionaryCN = nil;
 static NSDictionary *emojiDictionaryTW = nil;
@@ -41,6 +41,16 @@ static NSDictionary *faceDictionary = nil;
 	}
 }
 
+static JGLanguageType lanType;
+
++ (void)setLanType:(JGLanguageType)type {
+    lanType = type;
+}
+
++ (JGLanguageType)lanType {
+    return lanType;
+}
+
 - (NSString *)transformServerStringToClientString {
     NSString *text = self;
     static NSString *regex_face = @"\\/fs:[0-9]+\\/";
@@ -50,14 +60,15 @@ static NSDictionary *faceDictionary = nil;
         exp_face = [[NSRegularExpression alloc] initWithPattern:regex_face
                                                         options:NSRegularExpressionCaseInsensitive | NSRegularExpressionDotMatchesLineSeparators
                                                           error:nil];
-        
-        
-        
     }
     
     NSArray *faces = [exp_face matchesInString:text
                                        options:NSRegularExpressionCaseInsensitive | NSRegularExpressionDotMatchesLineSeparators
                                          range:NSMakeRange(0, text.length)];
+    
+    if (!faces || faces.count == 0) {
+        return text;
+    }
     
     NSUInteger location = 0;
     NSMutableString *string = [NSMutableString string];
@@ -83,11 +94,104 @@ static NSDictionary *faceDictionary = nil;
         [string appendString:subStr];
     }
     
+    // 去掉转义字符
+    (void)[string replaceOccurrencesOfString:@"\\\\" withString:@"\\" options:NSCaseInsensitiveSearch range:NSMakeRange(0, string.length)];
+    (void)[string replaceOccurrencesOfString:@"\\/" withString:@"/" options:NSCaseInsensitiveSearch range:NSMakeRange(0, string.length)];
+    
     return [string copy];
 }
 
-- (NSString *)transformClientStringToServerString {
-    return nil;
+- (NSRegularExpression *)emoticonRegexCN {
+    static NSRegularExpression *emoticonRegexCN = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableArray *tempArray = [NSMutableArray array];
+        for (NSDictionary *info in emojiDictionaryCN) {
+            NSString *tempString = [NSString stringWithFormat:@"\\[%@\\]", info[@"phrase_CN"]];
+            [tempArray addObject:tempString];
+        }
+        NSString *pattern = [tempArray componentsJoinedByString:@"|"];
+        
+        emoticonRegexCN = [[NSRegularExpression alloc] initWithPattern:pattern
+                                                               options:NSRegularExpressionCaseInsensitive | NSRegularExpressionDotMatchesLineSeparators
+                                                                 error:nil];
+    });
+    return emoticonRegexCN;
+}
+
+- (NSRegularExpression *)emoticonRegexTW {
+    static NSRegularExpression *emoticonRegexTW = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableArray *tempArray = [NSMutableArray array];
+        for (NSDictionary *info in emojiDictionaryTW) {
+            NSString *tempString = [NSString stringWithFormat:@"\\[%@\\]", info[@"phrase_TW"]];
+            [tempArray addObject:tempString];
+        }
+        NSString *pattern = [tempArray componentsJoinedByString:@"|"];
+        
+        emoticonRegexTW = [[NSRegularExpression alloc] initWithPattern:pattern
+                                                               options:NSRegularExpressionCaseInsensitive | NSRegularExpressionDotMatchesLineSeparators
+                                                                 error:nil];
+    });
+    return emoticonRegexTW;
+}
+
+// 将[xx] 转成/fs:x/
+- (NSString *)transformClientStringToServerStringIsFace:(BOOL *)face {
+    NSString *text = self;
+    
+    NSRegularExpression *emoticonRegex = (lanType == JGLanguage_TW ? [self emoticonRegexTW] : [self emoticonRegexCN]);
+    
+    NSArray *emojis = [emoticonRegex matchesInString:text
+                                             options:NSRegularExpressionCaseInsensitive | NSRegularExpressionDotMatchesLineSeparators
+                                               range:NSMakeRange(0, text.length)];
+    
+    if (!emojis || emojis.count == 0) {
+        *face = NO;
+        return text;
+    }
+    
+    *face = YES;
+    NSMutableString *string = [NSMutableString stringWithString:text];
+    // 加转义字符
+    (void)[string replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:NSCaseInsensitiveSearch range:NSMakeRange(0, string.length)];
+    (void)[string replaceOccurrencesOfString:@"/" withString:@"\\/" options:NSCaseInsensitiveSearch range:NSMakeRange(0, string.length)];
+    
+    text = [string copy];
+    string = [NSMutableString string];
+    
+    NSUInteger location = 0;
+    for (NSTextCheckingResult *result in emojis) {
+        NSRange range = result.range;
+        NSString *norSubStr = [text substringWithRange:NSMakeRange(location, range.location - location)];
+        [string appendString:norSubStr];
+        
+        NSString *subStr = [text substringWithRange:range];
+        NSString *faceKey = [subStr substringWithRange:NSMakeRange(1, subStr.length - 2)];
+        if (faceKey) {
+            if (lanType == JGLanguage_TW) {
+                NSDictionary *info = emojiDictionaryTW[faceKey];
+                NSString *faceID = info[@"faceID"];
+                [string appendFormat:@"/fs:%@/", faceID];
+            }
+            else {
+                NSDictionary *info = emojiDictionaryCN[faceKey];
+                NSString *faceID = info[@"faceID"];
+                [string appendFormat:@"/fs:%@/", faceID];
+            }
+        }
+        
+        location = range.location + range.length;
+    }
+    
+    if (location < text.length) {
+        NSRange range = NSMakeRange(location, text.length - location);
+        NSString *subStr = [text substringWithRange:range];
+        [string appendString:subStr];
+    }
+    
+    return [string copy];
 }
 
 - (NSTextStorage *)transformText {

@@ -8,7 +8,7 @@
 
 #import <libkern/OSAtomic.h>
 #import "CWCoreTextView.h"
-#import "NSString+Weibo.h"
+#import "NSString+Jingoal.h"
 #import "CWTouchesGestureRecognizer.h"
 
 NSString *const kTouchedLinkNotification = @"kTouchedLinkNotification";
@@ -134,14 +134,13 @@ static const NSRange kCWInvalidRange = {.location = NSNotFound, .length = 0};
 		NSUInteger index = [_layoutManager glyphIndexForPoint:location inTextContainer:_textContainer fractionOfDistanceThroughGlyph:&fraction];
 		
         CGRect glyphRect = [_layoutManager boundingRectForGlyphRange:NSMakeRange(index, 1) inTextContainer:_textContainer];
-        
-		NSLog(@"%lu", index);
+                
 		/*if (0.01 < fraction && fraction < 0.99) {*/
         if (CGRectContainsPoint(glyphRect, location)) {
 			NSRange effectiveRange;
 			
 			id value = [_textStorage attribute:NSLinkAttributeName atIndex:index effectiveRange:&effectiveRange];
-			
+            
 			if (value) {
 				_touchRange = effectiveRange;
 				_layoutManager.touchRange = _touchRange;

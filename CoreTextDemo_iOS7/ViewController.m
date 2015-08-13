@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "CWCoreTextView.h"
-#import "NSString+Weibo.h"
+#import "NSString+Jingoal.h"
 
 @interface ViewController ()
 

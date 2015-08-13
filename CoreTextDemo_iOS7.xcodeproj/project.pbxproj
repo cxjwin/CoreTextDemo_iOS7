@@ -62,7 +62,7 @@
 		55759C531827A25500D82CB6 /* emotionImage.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55759C511827A25500D82CB6 /* emotionImage.plist */; };
 		55759C541827A25500D82CB6 /* emotion.plist in Resources */ = {isa = PBXBuildFile; fileRef = 55759C521827A25500D82CB6 /* emotion.plist */; };
 		5579949419EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5579949319EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m */; };
-		558862D01B77AE450085DD5B /* NSString+Weibo.m in Sources */ = {isa = PBXBuildFile; fileRef = 558862CF1B77AE450085DD5B /* NSString+Weibo.m */; };
+		558862D01B77AE450085DD5B /* NSString+Jingoal.m in Sources */ = {isa = PBXBuildFile; fileRef = 558862CF1B77AE450085DD5B /* NSString+Jingoal.m */; };
 		559687781B79758300237C3D /* face.plist in Resources */ = {isa = PBXBuildFile; fileRef = 559687771B79758300237C3D /* face.plist */; };
 		559751D71B73A70300762913 /* test.txt in Resources */ = {isa = PBXBuildFile; fileRef = 559751D61B73A70300762913 /* test.txt */; };
 		55F01AE818223C7C00B14D65 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F01AE718223C7C00B14D65 /* Foundation.framework */; };
@@ -149,8 +149,8 @@
 		55759C521827A25500D82CB6 /* emotion.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emotion.plist; sourceTree = "<group>"; };
 		5579949219EE3E6B006C8E4F /* CWTouchesGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTouchesGestureRecognizer.h; sourceTree = "<group>"; };
 		5579949319EE3E6B006C8E4F /* CWTouchesGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTouchesGestureRecognizer.m; sourceTree = "<group>"; };
-		558862CE1B77AE450085DD5B /* NSString+Weibo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Weibo.h"; sourceTree = "<group>"; };
-		558862CF1B77AE450085DD5B /* NSString+Weibo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Weibo.m"; sourceTree = "<group>"; };
+		558862CE1B77AE450085DD5B /* NSString+Jingoal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Jingoal.h"; sourceTree = "<group>"; };
+		558862CF1B77AE450085DD5B /* NSString+Jingoal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Jingoal.m"; sourceTree = "<group>"; };
 		559687771B79758300237C3D /* face.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = face.plist; sourceTree = "<group>"; };
 		559751D61B73A70300762913 /* test.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.txt; sourceTree = "<group>"; };
 		55F01AE418223C7C00B14D65 /* CoreTextDemo_iOS7.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreTextDemo_iOS7.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -294,8 +294,8 @@
 			isa = PBXGroup;
 			children = (
 				559751D61B73A70300762913 /* test.txt */,
-				558862CE1B77AE450085DD5B /* NSString+Weibo.h */,
-				558862CF1B77AE450085DD5B /* NSString+Weibo.m */,
+				558862CE1B77AE450085DD5B /* NSString+Jingoal.h */,
+				558862CF1B77AE450085DD5B /* NSString+Jingoal.m */,
 				55F01AF618223C7C00B14D65 /* AppDelegate.h */,
 				55F01AF718223C7C00B14D65 /* AppDelegate.m */,
 				55F01AF918223C7C00B14D65 /* Main.storyboard */,
@@ -500,7 +500,7 @@
 				55F01AFE18223C7C00B14D65 /* ViewController.m in Sources */,
 				55F01AF818223C7C00B14D65 /* AppDelegate.m in Sources */,
 				55F01B1E18223CB500B14D65 /* CWCoreTextView.m in Sources */,
-				558862D01B77AE450085DD5B /* NSString+Weibo.m in Sources */,
+				558862D01B77AE450085DD5B /* NSString+Jingoal.m in Sources */,
 				55F01AF418223C7C00B14D65 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
